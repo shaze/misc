@@ -36,6 +36,8 @@ for line in f:
     except urllib2.HTTPError as err:
         result=1
         result="{},{},{}{}".format(tag,"FAIL",err.code,err.msg)
+    except urllib2.URLError as err:
+        result="{},{},{}{}".format(tag,"FAIL",err.message,err.reason)
     print(result)
 f.close()
     
