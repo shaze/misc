@@ -1,6 +1,41 @@
 # misc
 
 
+## parallel.nf
+
+
+Run like this
+
+```
+nextflow run parallel.nf --script scriptfile 
+```
+
+_scriptfile_ should be a bash file with a separate command on each line -- the commands should be run in  the foreground not the backgroud. There are two examples given `sleep.cmd` and `plink.cmd`
+
+
+Each command will be run in parallel on the system, subject to the maximum capacity of your system. The following options are permitted
+
+
+
+* `-profile slurm`  submit each job separately to the head node of the cluster running slurm. NB. This parameter takes a single "-" Note that you need to have the `nextflow.config` file in your directory when you run it. You may need to change the queue name to which your jobs should be submitted
+* `-profile pbs` ditto for  a cluster running PBS
+* `--cpus` show many CPUs does each job need. The default value is 1. 
+* `--mem` how much memory is required. Default is "1GB". The unit should be specified
+* `--max_fork` how many jobs should Nextflow allow to be active at a time (default is 30, probably 60-100 would be fine but that would depend on the size of your cluster, how busy it is, and any per-user limits on your job. You  should generally rely on the scheduler to do its job but be aware of others needs -- definitely if you have a thousands of jobs or if each job is very long running, pick a reaonable number not to antagonise your colleagues.)
+* `--out_dir` the name of the directory where you want the result to go
+
+For example
+
+```
+
+nextflow run parallel.nf --script plink.cmd -profile slurm --mem 6GB  --cpus 2 --max_fork 20 --out_dir /tmp/result
+
+```
+
+Note that if the number of jobs is much larger than `max_forks` or if the jobs are very long running, you should run a `screen` session for the nextflow run.
+
+
+
 ## collect.py
 
 Remote fetching of data.
@@ -15,4 +50,6 @@ In the terminal sessions
   `python collect.py sample.csv`   followed by return.
 1. The program tries to guess the correct ouput type but can't always do that.
 1. If the program can't fetch the data : e.g., file no longer available you should get a meaningful error message
+
+
 
