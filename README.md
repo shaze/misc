@@ -1,6 +1,33 @@
 # misc
 
 
+## figsplit.py
+
+This script is used to render PDF from xfig that is suitable for LaTeX Beamer presentations, where the xfig has multiple depths or layers. I used to generate multimetapost files and then use mpost to generate multiple PDF. However, recent versions of xfig seem to have dropped this.
+
+In the simplest form run
+
+```
+figsplit.py picture.fig
+```
+
+This produces picture-0.pdf picture-1.pdf picture-2.pdf.... Then, use the xmpmulti package in LaTeX  and use the multiinclude function (perhaps don't use the <+>)
+
+```
+  \multiinclude[<+>][format=pdf,graphics={width=9cm}]{picture}
+```  
+
+Notice that items with lower depth are above items with higher depth. The default behaviour is that everything that at depth n also occurs in the PDFs for depth below n. So if depth 40 correponds to picture-4.pdf then all items at depth 40 will also occur in picture-5.pdf, picture-6... Usually this is what we want, but sometimes in a dynamic picture you will want avoid this
+
+
+```
+figsplit.py --occlude 30-40:40.41,20-25:28 picture.fig
+```
+
+This says -- in the PDFs produced in layers 30-40, don't include items at depth 40 or 41, and in layers 20-25 don't include items at depth 28
+
+
+
 ## parallel.nf
 
 
